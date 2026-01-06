@@ -35,7 +35,8 @@ Do not invent rules, signals, weights, interpretations, or fields.
 Analyze ONLY the files in the following directories:
 
 <SCOPE>
-[INSERT FOLDERS HERE — e.g. help/rtcdp/, help/segmentation/, help/destinations/]
+experience-platform-en/help/rtcdp/
+<!-- [INSERT FOLDERS HERE — e.g. help/rtcdp/, help/segmentation/, help/destinations/] -->
 </SCOPE>
 
 Do NOT analyze files outside this scope.
@@ -80,6 +81,19 @@ For each file in scope:
 
 
 ## Output requirements (file-enforced, strict)
+
+If you cannot produce output that fully conforms to
+docsops-metadata-enforcement/contracts/decision-output-schema.json:
+
+- ABORT immediately.
+- Do NOT write partial output.
+- Do NOT write any file.
+- Do NOT print JSON to chat.
+- Output EXACTLY the following line and nothing else:
+
+```
+ABORTED_SCHEMA_NONCOMPLIANCE
+```
 
 You MUST write the complete JSON output to the following file:
 
