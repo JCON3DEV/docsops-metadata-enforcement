@@ -1,120 +1,190 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "DocsOps Metadata Decision Output",
-    "description": "Decision output schema for RTCDP metadata detection and enforcement (MVP).",
-    "type": "object",
-    "required": [
-        "file_path",
-        "current_features",
-        "signals_matched",
-        "evidence",
-        "proposed_features",
-        "confidence",
-        "decision"
-    ],
-    "properties": {
-        "file_path": {
-            "type": "string",
-            "description": "Relative path to the documentation file being evaluated."
-        },
-        "current_features": {
-            "type": "array",
-            "description": "Existing metadata features applied to the file.",
-            "items": {
-                "type": "string"
-            }
-        },
-        "signals_matched": {
-            "type": "array",
-            "description": "Hard signals detected in the content.",
-            "items": {
-                "type": "object",
-                "required": [
-                    "rule_id",
-                    "signal_type",
-                    "match_pattern",
-                    "weight"
-                ],
-                "properties": {
-                    "rule_id": {
-                        "type": "string",
-                        "description": "Unique identifier of the hard-signal rule."
-                    },
-                    "signal_type": {
-                        "type": "string",
-                        "enum": [
-                            "explicit_string",
-                            "feature_name",
-                            "entitlement_phrase"
-                        ],
-                        "description": "Classification of the detected signal."
-                    },
-                    "match_pattern": {
-                        "type": "string",
-                        "description": "Exact string or pattern that triggered the signal."
-                    },
-                    "weight": {
-                        "type": "number",
-                        "minimum": 0,
-                        "maximum": 1,
-                        "description": "Confidence weight assigned to this signal."
-                    }
-                }
-            }
-        },
-        "evidence": {
-            "type": "array",
-            "description": "Human-verifiable evidence supporting detected signals.",
-            "items": {
-                "type": "object",
-                "required": [
-                    "snippet",
-                    "line_number"
-                ],
-                "properties": {
-                    "snippet": {
-                        "type": "string",
-                        "description": "Exact text excerpt from the document."
-                    },
-                    "line_number": {
-                        "type": "integer",
-                        "description": "Line number where the snippet was found."
-                    }
-                }
-            }
-        },
-        "proposed_features": {
-            "type": "array",
-            "description": "Metadata features proposed for addition (never removals).",
-            "items": {
-                "type": "string"
-            }
-        },
-        "confidence": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1,
-            "description": "Aggregate confidence score derived from weighted hard signals."
-        },
-        "decision": {
+    "title": "DocsOps Metadata Decision Output (Batch)",
+    "description": "Decision output schema for RTCDP metadata detection and enforcement (MVP). One object per file, emitted as an array.",
+    "type": "array",
+    "items": {
+        "$ref": "#/definitions/decision_object"
+    },
+    "definitions": {
+        "rtcdp_feature": {
             "type": "string",
             "enum": [
-                "add",
-                "review",
-                "ignore"
+                "RTCDP B2B",
+                "RTCDP B2C",
+                "RTCDP B2P",
+                "RTCDP Prime",
+                "RTCDP Ultimate"
             ],
-            "description": "System recommendation based on confidence thresholds and contract rules."
+            "description": "Canonical RTCDP edition/tier feature values allowed by the taxonomy contract."
         },
-        "decision_rationale": {
-            "type": "string",
-            "description": "Deterministic, machine-generated explanation for the decision."
-        },
-        "constraints_violated": {
-            "type": "array",
-            "description": "Optional list of taxonomy contract constraints that block auto-add.",
-            "items": {
-                "type": "string"
-            }
+        "decision_object": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "file_path",
+                "current_features",
+                "current_rtcdp_features",
+                "signals_matched",
+                "evidence",
+                "proposed_features",
+                "confidence",
+                "decision",
+                "decision_rationale"
+            ],
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "Relative path to the documentation file being evaluated."
+                },
+                "current_features": {
+                    "type": "array",
+                    "description": "Existing metadata features applied to the file (as present in front matter). This may include non-RTCDP features.",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "current_rtcdp_features": {
+                    "type": "array",
+                    "description": "Existing RTCDP edition/tier features on the file (derived as the intersection of current_features and the RTCDP contract feature set).",
+                    "items": {
+                        "$ref": "#/definitions/rtcdp_feature"
+                    },
+                    "uniqueItems": true
+                },
+                "signals_matched": {
+                    "type": "array",
+                    "description": "Hard signals detected in the document body/headings. Signals must match rule_id values defined in the hard-signal dictionary.",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "rule_id",
+                            "signal_type",
+                            "match_pattern",
+                            "weight"
+                        ],
+                        "properties": {
+                            "rule_id": {
+                                "type": "string",
+                                "description": "Unique identifier of the hard-signal rule (must match the hard-signal dictionary exactly)."
+                            },
+                            "signal_type": {
+                                "type": "string",
+                                "enum": [
+                                    "explicit_string",
+                                    "feature_name",
+                                    "entitlement_phrase"
+                                ],
+                                "description": "Classification of the detected signal."
+                            },
+                            "match_pattern": {
+                                "type": "string",
+                                "description": "Exact string or pattern that triggered the signal."
+                            },
+                            "weight": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "description": "Confidence weight assigned to this signal."
+                            }
+                        }
+                    }
+                },
+                "evidence": {
+                    "type": "array",
+                    "description": "Human-verifiable evidence supporting detected signals.",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "snippet",
+                            "line_number"
+                        ],
+                        "properties": {
+                            "snippet": {
+                                "type": "string",
+                                "description": "Exact text excerpt from the document."
+                            },
+                            "line_number": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "description": "1-based line number where the snippet was found."
+                            }
+                        }
+                    }
+                },
+                "proposed_features": {
+                    "type": "array",
+                    "description": "RTCDP features proposed for addition (additive only). Must use canonical RTCDP feature values. Order must be stable (sorted) and items must be unique.",
+                    "items": {
+                        "$ref": "#/definitions/rtcdp_feature"
+                    },
+                    "uniqueItems": true
+                },
+                "confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Aggregate confidence score derived from weighted hard signals (per the confidence model)."
+                },
+                "decision": {
+                    "type": "string",
+                    "enum": [
+                        "add",
+                        "review",
+                        "ignore"
+                    ],
+                    "description": "Action recommendation. 'add' means propose RTCDP features to add (non-empty proposed_features). 'review' means human review required. 'ignore' means no action."
+                },
+                "decision_rationale": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Deterministic, machine-generated explanation for the decision (1–2 sentences)."
+                },
+                "constraints_violated": {
+                    "type": "array",
+                    "description": "Optional list of taxonomy contract constraints that block auto-add (populated only when relevant).",
+                    "items": {
+                        "type": "string"
+                    },
+                    "uniqueItems": true
+                }
+            },
+            "allOf": [
+                {
+                    "if": {
+                        "properties": {
+                            "decision": {
+                                "const": "add"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "proposed_features": {
+                                "minItems": 1
+                            }
+                        }
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "decision": {
+                                "const": "ignore"
+                            }
+                        }
+                    },
+                    "then": {
+                        "properties": {
+                            "proposed_features": {
+                                "maxItems": 0
+                            }
+                        }
+                    }
+                }
+            ]
         }
     }
 }
