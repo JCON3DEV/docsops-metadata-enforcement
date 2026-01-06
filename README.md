@@ -79,6 +79,10 @@ docsops-metadata-enforcement/
 │   └── prompt-a-analysis.md
 │   └── prompt-b-dedupe-jira.md
 │
+├── runs/ (gitignored)
+│   └── current.json
+│   └── previous.json
+│
 └── README.md
 ```
 
