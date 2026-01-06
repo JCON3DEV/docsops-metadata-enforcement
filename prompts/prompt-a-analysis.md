@@ -15,10 +15,10 @@ This is a detection-only task. Do not generate or modify documentation content.
 
 You MUST read and apply the following files from the repository:
 
-- taxonomy/taxonomy-contract-rtcdp.md
-- signals/hard-signal-dictionary.md
-- models/confidence-model.md
-- contracts/decision-output-schema.json
+- docsops-metadata-enforcement/taxonomy/taxonomy-contract-rtcdp.md
+- docsops-metadata-enforcement/signals/hard-signal-dictionary.md 
+- docsops-metadata-enforcement/models/confidence-model.md 
+- docsops-metadata-enforcement/contracts/decision-output-schema.json
 
 These files define:
 
