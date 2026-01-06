@@ -1,167 +1,208 @@
 ---
 title: Hard-Signal Dictionary
-description: ...
+description: Canonical, detection-only dictionary of explicit hard signals used to identify RTCDP edition- and tier-specific documentation content for MVP metadata enforcement. Signals are intentionally restrictive, deterministic, and contract-derived.
 ---
-# Hard-Signal Dictionary (v0.1)
+# Hard-Signal Dictionary (v0.2)
 
-**Scope:** MVP metadata enforcement detection only  
+**Scope:** MVP metadata enforcement — detection only  
 **Derivation:** Strict implementation of Taxonomy Contract Sections 5 and 7  
 **Inference:** None  
 **ML:** None  
 **Rule count:** 12 (intentionally capped)
 
+
+## Global Signal Constraints (Non-Negotiable)
+
+These constraints apply to **all rules** below:
+
+- **Signal surface (MVP):**
+  - Scan **document body and headings only**
+  - **Do NOT** treat front matter as evidence
+  - **Do NOT** treat `keywords`, badges, or navigation labels as evidence
+- **Front matter usage:**
+  - Front matter is read **only** to extract `current_features`
+- **Proposed features MUST be canonical:**
+  - `RTCDP B2B`
+  - `RTCDP B2C`
+  - `RTCDP B2P`
+  - `RTCDP Prime`
+  - `RTCDP Ultimate`
+- **Absence of signals is expected and valid**
+
+
 ## Edition Signals
 
-### Rule B2B-01
+### Rule B2B-01 — Explicit B2B Edition Reference
 
 - **rule_id:** `b2b_explicit_edition`
-- **applies_to:** `B2B`
+- **applies_to:** `RTCDP B2B`
 - **signal_type:** `explicit_string`
 - **match_pattern:**  
-  `Real[- ]?Time Customer Data Platform \(?B2B Edition\)?`
+  `Real[- ]?Time Customer Data Platform \(?B2B Edition\)?|Real[- ]?Time CDP \(?B2B Edition\)?`
 - **confidence_weight:** `0.7`
 - **exclusions:** none
 
-### Rule B2B-02
+
+### Rule B2B-02 — Businessperson Profile (Standalone)
 
 - **rule_id:** `b2b_businessperson_profile`
-- **applies_to:** `B2B`
+- **applies_to:** `RTCDP B2B`
 - **signal_type:** `explicit_string`
 - **match_pattern:**  
   `Businessperson Profile(s)?`
 - **confidence_weight:** `0.6`
-- **exclusions:**  
-  - pages explicitly scoped to `B2P`
+- **exclusions:**
+  - pages explicitly scoped to `RTCDP B2P`
 
-### Rule B2B-03
+
+### Rule B2B-03 — Account + Businessperson Profile Coupling
 
 - **rule_id:** `b2b_account_profile_with_businessperson`
-- **applies_to:** `B2B`
+- **applies_to:** `RTCDP B2B`
 - **signal_type:** `explicit_string`
 - **match_pattern:**  
   `Account Profile(s)?.{0,200}Businessperson Profile(s)?|Businessperson Profile(s)?.{0,200}Account Profile(s)?`
 - **confidence_weight:** `0.6`
-- **exclusions:**  
-  - `B2P Edition`
+- **exclusions:**
+  - `RTCDP B2P`
   - `Consumer Audience`
 
-### Rule B2C-01
+
+### Rule B2C-01 — Explicit B2C Edition Reference
 
 - **rule_id:** `b2c_explicit_edition`
-- **applies_to:** `B2C`
+- **applies_to:** `RTCDP B2C`
 - **signal_type:** `explicit_string`
 - **match_pattern:**  
-  `Real[- ]?Time Customer Data Platform \(?B2C Edition\)?`
+  `Real[- ]?Time Customer Data Platform \(?B2C Edition\)?|Real[- ]?Time CDP \(?B2C Edition\)?`
 - **confidence_weight:** `0.7`
 - **exclusions:** none
 
-### Rule B2C-02
+
+### Rule B2C-02 — Consumer Audience
 
 - **rule_id:** `b2c_consumer_audience`
-- **applies_to:** `B2C`
+- **applies_to:** `RTCDP B2C`
 - **signal_type:** `explicit_string`
 - **match_pattern:**  
-  `Consumer Audience`
+  `Consumer Audience(s)?`
 - **confidence_weight:** `0.5`
-- **exclusions:**  
+- **exclusions:**
   - `Business Audience`
   - `Businessperson Profile`
 
-### Rule B2P-01
+
+### Rule B2P-01 — Explicit B2P Edition Reference
 
 - **rule_id:** `b2p_explicit_edition`
-- **applies_to:** `B2P`
+- **applies_to:** `RTCDP B2P`
 - **signal_type:** `explicit_string`
 - **match_pattern:**  
-  `Real[- ]?Time Customer Data Platform \(?B2P Edition\)?`
+  `Real[- ]?Time Customer Data Platform \(?B2P Edition\)?|Real[- ]?Time CDP \(?B2P Edition\)?`
 - **confidence_weight:** `0.7`
 - **exclusions:** none
 
-### Rule B2P-02
+
+### Rule B2P-02 — Dual Profile Model (Person + Businessperson)
 
 - **rule_id:** `b2p_dual_profile_model`
-- **applies_to:** `B2P`
+- **applies_to:** `RTCDP B2P`
 - **signal_type:** `explicit_string`
 - **match_pattern:**  
   `Person Profile(s)?.{0,200}Businessperson Profile(s)?|Businessperson Profile(s)?.{0,200}Person Profile(s)?`
 - **confidence_weight:** `0.6`
 - **exclusions:** none
 
+
 ## Package (Tier) Signals
 
-> Package signals are valid **only when paired with an edition** (`B2B`, `B2C`, or `B2P`) per Section 5 of the contract.
+> Tier signals apply **only when explicitly and unambiguously stated**.  
+> Quantitative limits, quotas, or "you can purchase more" language are **not valid signals**.
 
-### Rule PRIME-01
+### Rule PRIME-01 — Explicit Prime Product Naming
 
 - **rule_id:** `prime_explicit_product_name`
-- **applies_to:** `Prime`
+- **applies_to:** `RTCDP Prime`
 - **signal_type:** `explicit_string`
 - **match_pattern:**  
-  `Real-Time Customer Data Platform Prime|Real-Time CDP Prime`
+  `Real[- ]?Time Customer Data Platform Prime|Real[- ]?Time CDP Prime`
 - **confidence_weight:** `0.6`
 - **exclusions:** none
 
-### Rule PRIME-02
+
+### Rule PRIME-02 — Prime Collaboration Credit Entitlement
 
 - **rule_id:** `prime_collaboration_2500`
-- **applies_to:** `Prime`
+- **applies_to:** `RTCDP Prime`
 - **signal_type:** `entitlement_phrase`
 - **match_pattern:**  
   `2,500 Collaboration Credits`
 - **confidence_weight:** `0.6`
-- **exclusions:**  
+- **exclusions:**
   - `5,000 Collaboration Credits`
 
-### Rule ULT-01
+
+### Rule ULT-01 — Explicit Ultimate Product Naming
 
 - **rule_id:** `ultimate_explicit_product_name`
-- **applies_to:** `Ultimate`
+- **applies_to:** `RTCDP Ultimate`
 - **signal_type:** `explicit_string`
 - **match_pattern:**  
-  `Real-Time Customer Data Platform Ultimate|Real-Time CDP Ultimate`
+  `Real[- ]?Time Customer Data Platform Ultimate|Real[- ]?Time CDP Ultimate`
 - **confidence_weight:** `0.6`
 - **exclusions:** none
 
-### Rule ULT-02
+
+### Rule ULT-02 — Destination SDK Hard Gate
 
 - **rule_id:** `ultimate_destination_sdk_entitlement`
-- **applies_to:** `Ultimate`
+- **applies_to:** `RTCDP Ultimate`
 - **signal_type:** `entitlement_phrase`
 - **match_pattern:**  
   `Access to (the )?Destination SDK|Destination SDK enabling Customer to build custom destination connectors`
 - **confidence_weight:** `0.6`
 - **exclusions:** none
 
+
 ## Contract-Violation Detectors (Non-Additive)
 
 > These rules **never add features**.  
-> They exist solely to enforce Section 5 constraints.
+> They exist solely to block auto-add when the taxonomy contract is violated.
 
-### Rule VIO-01
+### Rule VIO-01 — Prime and Ultimate Coexistence
 
 - **rule_id:** `invalid_prime_and_ultimate_coexist`
-- **applies_to:** `Prime|Ultimate`
+- **applies_to:** `RTCDP Prime|RTCDP Ultimate`
 - **signal_type:** `feature_name`
 - **match_pattern:**  
-  front-matter contains both `Prime` **and** `Ultimate`
+  front matter contains both `RTCDP Prime` **and** `RTCDP Ultimate`
 - **confidence_weight:** `0.7`
 - **exclusions:** none
 
-### Rule VIO-02
+
+### Rule VIO-02 — Package Without Edition
 
 - **rule_id:** `invalid_package_without_edition`
-- **applies_to:** `Prime|Ultimate`
+- **applies_to:** `RTCDP Prime|RTCDP Ultimate`
 - **signal_type:** `feature_name`
 - **match_pattern:**  
-  front-matter contains `Prime` or `Ultimate` **without** `B2B`, `B2C`, or `B2P`
+  front matter contains `RTCDP Prime` or `RTCDP Ultimate` **without** one of:
+  - `RTCDP B2B`
+  - `RTCDP B2C`
+  - `RTCDP B2P`
 - **confidence_weight:** `0.7`
 - **exclusions:** none
 
-## Notes (Implementation-Critical)
 
-- No rule implies eligibility on its own
-- HIGH confidence requires **multiple aligned signals**
-- Violations block auto-add behavior
-- Absence of signals is valid and expected
-- Any new rule must trace back to the taxonomy contract
+## Implementation Notes (Read This)
 
+- Signals are **necessary but never sufficient** on their own
+- Confidence scoring does **not** override taxonomy constraints
+- Tier tagging is intentionally **rare**
+- Silence is a success state
+- Any new rule must:
+  1. Trace to the taxonomy contract
+  2. Survive false-positive analysis
+  3. Justify its operational cost
+
+This dictionary is optimized for **trust, restraint, and long-term maintainability**, not coverage.
