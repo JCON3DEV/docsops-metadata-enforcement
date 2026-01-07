@@ -67,6 +67,23 @@ decision = "ignore"
 - Do NOT assume tier information unless the content explicitly and unambiguously states it.
 - Silence is expected when no valid signals are present.
 
+## Canonical RTCDP feature enforcement (non-negotiable)
+
+The ONLY valid RTCDP feature values (exact strings) are:
+
+- RTCDP B2B
+- RTCDP B2C
+- RTCDP B2P
+- RTCDP Prime
+- RTCDP Ultimate
+
+Rules:
+
+- `current_rtcdp_features` MUST be the intersection of `current_features` and the list above.
+- `proposed_features` MUST contain ONLY values from the list above.
+- Do NOT emit slugs, IDs, kebab-case, snake_case, or aliases (e.g., `rtcdp-b2b`, `B2B`, `b2b`, `Real-Time CDP B2B`).
+- If you detect a valid edition/tier, you MUST output the canonical value exactly as listed above.
+
 
 ## Per-file evaluation steps
 
@@ -107,6 +124,15 @@ docsops-metadata-enforcement/contracts/decision-output-schema.json:
 ```
 ABORTED_SCHEMA_NONCOMPLIANCE
 ```
+
+Fail-fast check (required):
+
+Before writing `docsops-metadata-enforcement/runs/current.json`, validate:
+
+- Every item in `current_rtcdp_features` is one of the 5 canonical values.
+- Every item in `proposed_features` is one of the 5 canonical values.
+
+If ANY non-canonical value would be emitted (including `rtcdp-b2b`), ABORT using the existing abort behavior.
 
 You MUST write the complete JSON output to the following file:
 
