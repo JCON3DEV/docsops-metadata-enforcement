@@ -50,7 +50,6 @@ Analyze ONLY the files in the following directories:
 
 <SCOPE>
 experience-platform-en/help/rtcdp/
-<!-- [INSERT FOLDERS HERE — e.g. help/rtcdp/, help/segmentation/, help/destinations/] -->
 </SCOPE>
 
 Do NOT analyze files outside this scope.
