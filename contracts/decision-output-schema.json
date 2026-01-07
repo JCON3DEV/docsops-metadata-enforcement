@@ -3,6 +3,7 @@
     "title": "DocsOps Metadata Decision Output (Batch)",
     "description": "Decision output schema for RTCDP metadata detection and enforcement (MVP). One object per file, emitted as an array.",
     "type": "array",
+    "additionalItems": false,
     "items": {
         "$ref": "#/definitions/decision_object"
     },
