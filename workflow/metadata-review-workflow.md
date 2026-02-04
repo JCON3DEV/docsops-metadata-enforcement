@@ -6,11 +6,11 @@ Docs repo
    ↓
 Prompt A (scan + detect)  
    ↓
-`runs/current.json`  
+Agent writes `runs/current.json`
    ↓
 Prompt B (compare + summarize)  
    ↓
-Jira-ready comment (manual post)
+Agent writes a Jira-ready comment (manual post)
 
 ## Baseline management (MVP – manual)
 
