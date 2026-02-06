@@ -114,6 +114,68 @@ These constraints apply to **all rules** below:
 - **exclusions:** none
 
 
+## Edition Entitlement Constraints
+
+> These rules detect **explicit availability restrictions** that limit a feature or capability
+> to a specific RTCDP edition.
+>
+> They apply **regardless of placement** in the document body (including notes, footnotes,
+> and callouts), but only when restriction language is explicit and unambiguous.
+>
+> These rules are intentionally high-precision and **do not infer intent**.
+
+### Rule B2B-ENT-01 — Explicit B2B Availability Restriction
+
+- **rule_id:** `b2b_entitlement_only`
+- **applies_to:** `RTCDP B2B`
+- **signal_type:** `entitlement_phrase`
+- **match_pattern:**  
+  `(only|available only|required|requires|limited)(.{0,40})(B2B Edition|RTCDP B2B)`
+- **confidence_weight:** `0.75`
+- **exclusions:**
+  - pages explicitly scoped to `RTCDP B2P`
+
+
+### Rule B2C-ENT-01 — Explicit B2C Availability Restriction
+
+- **rule_id:** `b2c_entitlement_only`
+- **applies_to:** `RTCDP B2C`
+- **signal_type:** `entitlement_phrase`
+- **match_pattern:**  
+  `(only|available only|required|requires|limited)(.{0,40})(B2C Edition|RTCDP B2C)`
+- **confidence_weight:** `0.75`
+- **exclusions:**
+  - pages explicitly scoped to `RTCDP B2P`
+
+
+### Rule B2P-ENT-01 — Explicit B2P Availability Restriction
+
+- **rule_id:** `b2p_entitlement_only`
+- **applies_to:** `RTCDP B2P`
+- **signal_type:** `entitlement_phrase`
+- **match_pattern:**  
+  `(only|available only|required|requires|limited)(.{0,40})(B2P Edition|RTCDP B2P)`
+- **confidence_weight:** `0.75`
+- **exclusions:** none
+
+
+<!--
+NON-SIGNALS (Intentional)
+
+The following language patterns are explicitly NOT treated as entitlement signals
+and must not trigger edition tagging:
+
+- "Designed for B2B use cases"
+- "Commonly used in B2B scenarios"
+- "Typically used by B2B customers"
+- "Works best for B2B"
+- "Supports B2B workflows"
+
+These phrases are descriptive or advisory, not contractual availability constraints.
+Treating them as signals would introduce inference and reduce trust in the system.
+-->
+
+
 ## Package (Tier) Signals
 
 > Tier signals apply **only when explicitly and unambiguously stated**.  
